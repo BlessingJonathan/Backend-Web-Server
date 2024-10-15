@@ -71,6 +71,25 @@ app.post('/login', async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+app.post('/cart', async (req, res) => {
+    const { userId, productId, quantity } = req.body;
+
+    try {
+        let cart = await Cart.findOne({ userId });
+        if (!cart) {
+            cart = new Cart({ userId, products: [] });
+        }
+        const existingProductIndex = cart.products.findIndex(p => p.productId === productId);
+        if (existingProductIndex > -1) {
+            cart.products[existingProductIndex].quantity += quantity;
+        } else {
+            cart.products.push({ productId, quantity });
+        };
+    }catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
 app.get('/getproducts', async (req, res) => {
   try {
     const products = await db.collection('Products Catalogue').find({}).toArray();
