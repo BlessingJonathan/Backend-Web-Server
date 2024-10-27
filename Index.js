@@ -73,8 +73,13 @@ app.post('/login', async (req, res) => {
 });
 app.get('/getproducts', async (req, res) => {
   try {
-    const products = await db.collection('Products Catalogue').find({}).toArray();
-    res.json(products);
+      try {
+        await client.connect();
+        const database = client.db('ThewriteInkco'); 
+        const productsCollection = database.collection('Products Catalogue'); 
+
+        const products = await productsCollection.find().toArray();
+        res.json(products);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching products' });
   }
@@ -82,8 +87,8 @@ app.get('/getproducts', async (req, res) => {
 app.get('/customers', async (req, res) => {
     try {
         await client.connect();
-        const database = client.db('ThewriteInkco'); // Replace with your database name
-        const usersCollection = database.collection('Customers'); // Replace with your collection name
+        const database = client.db('ThewriteInkco'); 
+        const usersCollection = database.collection('Customers'); 
 
         const users = await usersCollection.find().toArray();
         res.json(users);
@@ -96,8 +101,8 @@ app.get('/customers', async (req, res) => {
 app.get('/orders', async (req, res) => {
     try {
         await client.connect();
-        const database = client.db('ThewriteInkco'); // Replace with your database name
-        const orderCollection = database.collection('Cart'); // Replace with your collection name
+        const database = client.db('ThewriteInkco'); 
+        const orderCollection = database.collection('Cart'); 
 
         const orderItems = await orderCollection.find().toArray();
         res.json(orderItems);
